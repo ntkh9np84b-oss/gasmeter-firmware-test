@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI-on-the-Edge – Gasmeter Test-Firmware</title>
+  <script type="module" src="https://unpkg.com/esp-web-tools@10/dist/web/install-button.js?module"></script>
+  <style>
+    :root { color-scheme: light dark; font-family: system-ui, sans-serif; }
+    body { max-width: 760px; margin: 0 auto; padding: 28px 18px 60px; line-height: 1.55; }
+    h1 { line-height: 1.2; }
+    .card { border: 1px solid #8886; border-radius: 12px; padding: 18px; margin: 18px 0; }
+    .warn { border-left: 5px solid #d69e25; padding: 12px 16px; background: #d69e2518; }
+    .actions { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 14px; }
+    esp-web-install-button { display: inline-block; }
+    code { overflow-wrap: anywhere; }
+    small { opacity: .8; }
+  </style>
+</head>
+<body>
+  <h1>AI-on-the-Edge – Gasmeter</h1>
+  <p>Privater Test-Build auf Basis des offiziellen Releases <strong>v16.1.0</strong>. Es werden zwei Varianten angeboten, damit der Kameratakt isoliert verglichen und bei Bedarf zurückgesetzt werden kann.</p>
+
+  <div class="warn">
+    <strong>Vor dem Flashen unbedingt beachten</strong>
+    <ul>
+      <li>SD-Karte vollständig sichern (insbesondere <code>config.ini</code>, ROIs, Modelle und Messhistorie).</li>
+      <li>Der Installer fragt nach einem vollständigen Löschen des ESP-Flashs. Für diesen Test bitte <strong>Erase/Full erase</strong> wählen, damit keine alte OTA-Auswahl die neue Firmware übersteuert.</li>
+      <li>Das Löschen betrifft den internen Flash des ESP32, nicht die microSD-Karte. Interne NVS-/OTA-Daten werden zurückgesetzt.</li>
+      <li>ESP32-CAM per USB anschließen. Falls nötig in den Bootloader-Modus wechseln (GPIO0/FLASH auf GND halten, Reset auslösen, danach FLASH loslassen).</li>
+      <li>Chrome oder Edge unter Windows verwenden. USB-Zugriff über Web Serial wird benötigt.</li>
+    </ul>
+  </div>
+
+  <section class="card">
+    <h2>Test-Firmware: 8 MHz Kameratakt</h2>
+    <p>Einzige Quellcodeänderung gegenüber v16.1.0: <code>XCLK_FREQ_MHZ=8</code> statt des Standardwerts 20 MHz. Diese Variante dient ausschließlich dem WLAN-/Kamera-A/B-Test.</p>
+    <div class="actions">
+      <esp-web-install-button manifest="./firmware/8mhz/manifest.json">
+        <span slot="unsupported">Dieser Browser unterstützt Web Serial nicht. Bitte Chrome oder Edge verwenden.</span>
+      </esp-web-install-button>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Rückfall-Firmware: Original 20 MHz</h2>
+    <p>Unveränderter Build des offiziellen AI-on-the-Edge-Releases v16.1.0. Damit kann der Test ohne erneute lokale Entwicklungsumgebung zurückgenommen werden.</p>
+    <div class="actions">
+      <esp-web-install-button manifest="./firmware/stock/manifest.json">
+        <span slot="unsupported">Dieser Browser unterstützt Web Serial nicht. Bitte Chrome oder Edge verwenden.</span>
+      </esp-web-install-button>
+    </div>
+  </section>
+
+  <h2>Nach dem Flashen</h2>
+  <ol>
+    <li>ESP zurücksetzen und Start über die serielle Konsole beobachten.</li>
+    <li>Prüfen, ob die Kamera initialisiert und ein Livebild erzeugt.</li>
+    <li>Fünf Minuten Ping auf die ESP-IP laufen lassen und Paketverlust sowie maximale Antwortzeit notieren.</li>
+    <li>Erst danach OCR und Messwertübernahme prüfen.</li>
+  </ol>
+  <p><small>Build-Projekt: AI-on-the-Edge v16.1.0 von jomjol. Diese Testseite ist nicht offiziell vom Projektteam bereitgestellt. Quellcode und Lizenzbedingungen: <a href="https://github.com/jomjol/AI-on-the-edge-device/tree/v16.1.0">Upstream-Repository</a>.</small></p>
+</body>
+</html>
